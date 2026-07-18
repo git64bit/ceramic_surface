@@ -1,14 +1,15 @@
 /*
-  Ceramic Surface - Batch 001 defaults
+  Ceramic Surface - Batch 002 defaults
   Units: millimetres
 */
 
 // ---------- OpenSCAD Customizer ----------
-part = "assembly"; // [assembly,fixed_wedge,moving_wedge,lock_cassette,register_coupon]
+part = "saddle_assembly"; // [saddle_assembly,tpu_saddle,pla_datum_insert,saddle_fit_set,assembly,fixed_wedge,moving_wedge,lock_cassette,register_coupon]
 position_steps = 8; // [0:1:20]
 lock_state = "engaged"; // [engaged,released]
 show_grout_cutaway = false;
 exploded_view = false;
+show_saddle_tile = true;
 
 // ---------- Precision adjustment ----------
 vertical_step = 0.20;
@@ -70,15 +71,75 @@ grout_fill_diameter = 14;
 grout_vent_diameter = 4;
 internal_rib_thickness = 4;
 
-// ---------- Manufacturing clearances ----------
-general_clearance = 0.40;
-sliding_clearance = 0.55;
-
 // ---------- Preview ----------
 preview_tile_thickness = 9;
 preview_tile_length = 584.2; // 23 inches
 preview_tile_width = 279.4;  // 11 inches
+saddle_preview_tile_depth = 78;
 $fn = 48;
+
+// ---------- TPU ceramic saddle ----------
+saddle_fit_offset = 0.00; // [-0.50:0.05:0.50]
+saddle_tile_gap_clearance = 0.30;
+saddle_tile_gap = preview_tile_thickness
+                + saddle_tile_gap_clearance
+                + saddle_fit_offset;
+saddle_length = 110;
+saddle_depth = 52;
+saddle_back_wall = 9.60;
+saddle_jaw_thickness = 7.20;
+saddle_corner_relief_diameter = 4.00;
+saddle_drain_diameter = 5.00;
+
+saddle_grip_rib_height = 0.65;
+saddle_grip_rib_width = 5.60;
+saddle_grip_rib_x_start = 7;
+saddle_grip_rib_x_full = 18;
+saddle_grip_rib_x_end = 49;
+saddle_grip_rib_y_positions = [24, 55, 86];
+
+// ---------- Rigid saddle datum insert ----------
+saddle_datum_window_x = 10;
+saddle_datum_window_width = 32;
+saddle_datum_window_y = 0;
+saddle_datum_window_length = 92;
+saddle_datum_contact_proud = 0.15;
+
+saddle_insert_center_x = saddle_datum_window_x
+                       + saddle_datum_window_width / 2;
+saddle_insert_y = 0;
+saddle_insert_length = 96;
+saddle_insert_slide_clearance = 0.35;
+saddle_insert_deck_width = 28;
+saddle_insert_deck_height = 8;
+saddle_insert_flange_width = 38;
+saddle_insert_flange_height = 3.20;
+saddle_insert_pull_width = 22;
+saddle_insert_pull_length = 10;
+saddle_insert_pull_thickness = 4;
+saddle_insert_attachment_hole = 6.50;
+
+saddle_guide_wall = 5;
+saddle_guide_drop = 6.30;
+saddle_guide_lip_width = 4.35;
+saddle_guide_lip_thickness = 2.40;
+saddle_guide_stop_thickness = 7;
+saddle_guide_detent_projection = 0.65;
+saddle_guide_detent_length = 5;
+saddle_guide_detent_height = 2.40;
+saddle_guide_detent_y = 7;
+
+// ---------- Saddle fit coupons ----------
+saddle_fit_coupon_length = 28;
+saddle_fit_coupon_depth = 32;
+saddle_fit_coupon_spacing = 12;
+saddle_fit_tight_offset = -0.25;
+saddle_fit_nominal_offset = 0.00;
+saddle_fit_relaxed_offset = 0.25;
+
+// ---------- Manufacturing clearances ----------
+general_clearance = 0.40;
+sliding_clearance = 0.55;
 
 // ---------- Derived values ----------
 selected_step = min(max(position_steps, 0), working_steps);
@@ -98,3 +159,13 @@ assert(central_channel_width > 2 * rack_width,
        "central channel is too narrow for both register racks");
 assert(moving_top_height > wedge_slope * moving_length + moving_bottom_skin,
        "moving wedge becomes too thin at its narrow end");
+assert(saddle_tile_gap > saddle_grip_rib_height,
+       "saddle tile gap is too small for the grip rib");
+assert(saddle_datum_window_x > saddle_guide_wall,
+       "datum window leaves insufficient guide structure");
+assert(saddle_insert_deck_width
+       < saddle_insert_flange_width - 2 * saddle_insert_slide_clearance,
+       "insert deck must pass between the TPU guide lips");
+assert(saddle_insert_length + saddle_insert_y
+       < saddle_length - saddle_guide_stop_thickness,
+       "datum insert collides with the far guide stop");

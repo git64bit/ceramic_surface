@@ -1,7 +1,7 @@
 /*
   Ceramic Surface
   Configurable three-point precision wedge station
-  Batch 001, based on repository commit 6f218dc
+  Batch 002, based on repository commit 776083d
 */
 
 include <config/defaults.scad>
@@ -11,6 +11,7 @@ include <parts/moving_wedge.scad>
 include <parts/lock_cassette.scad>
 include <parts/fixed_wedge.scad>
 include <parts/register_coupon.scad>
+include <parts/tile_saddle.scad>
 
 module assembly_scene() {
     released = lock_state == "released";
@@ -36,7 +37,15 @@ module assembly_scene() {
              " to ", maximum_stack_height, " mm"));
 }
 
-if (part == "assembly") {
+if (part == "saddle_assembly") {
+    saddle_assembly(show_saddle_tile);
+} else if (part == "tpu_saddle") {
+    tpu_saddle_printable();
+} else if (part == "pla_datum_insert") {
+    pla_datum_insert_local();
+} else if (part == "saddle_fit_set") {
+    saddle_fit_set_printable();
+} else if (part == "assembly") {
     assembly_scene();
 } else if (part == "fixed_wedge") {
     fixed_wedge(show_grout_cutaway);
